@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     wget \
     ca-certificates \
+    git \
     # Playwright browser dependencies
     libnss3 \
     libnspr4 \
@@ -43,31 +44,49 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Copy requirements
-COPY requirements.txt .
-
-# Upgrade pip
+# Upgrade pip first
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
-# Install core dependencies (without heavy ML packages)
+# Install dependencies in stages to avoid conflicts
+# Stage 1: Core utilities
 RUN pip install --no-cache-dir \
     python-dotenv==1.0.0 \
     pyyaml==6.0.1 \
-    pydantic==2.5.0 \
-    playwright==1.40.0 \
-    numpy==1.26.2 \
-    soundfile==0.12.1 \
-    openai-whisper==20231117 \
-    faster-whisper==0.10.0 \
-    google-generativeai==0.8.0 \
-    reportlab==4.0.7 \
-    fastapi==0.108.0 \
-    uvicorn[standard]==0.25.0 \
-    jinja2==3.1.2 \
-    aiosqlite==0.19.0 \
     tenacity==8.2.3 \
-    structlog==23.2.0 \
+    structlog==23.2.0
+
+# Stage 2: Web framework
+RUN pip install --no-cache-dir \
+    pydantic==2.5.0 \
+    fastapi==0.108.0 \
+    uvicorn==0.25.0 \
+    jinja2==3.1.2 \
     httpx==0.26.0
+
+# Stage 3: Database
+RUN pip install --no-cache-dir \
+    aiosqlite==0.19.0
+
+# Stage 4: Audio/ML dependencies
+RUN pip install --no-cache-dir \
+    numpy==1.26.2 \
+    soundfile==0.12.1
+
+# Stage 5: Whisper (use faster-whisper only, skip openai-whisper)
+RUN pip install --no-cache-dir \
+    faster-whisper==0.10.0
+
+# Stage 6: AI/LLM
+RUN pip install --no-cache-dir \
+    google-generativeai==0.8.0
+
+# Stage 7: PDF generation
+RUN pip install --no-cache-dir \
+    reportlab==4.0.7
+
+# Stage 8: Browser automation
+RUN pip install --no-cache-dir \
+    playwright==1.40.0
 
 # Install Playwright browsers
 RUN playwright install chromium --with-deps

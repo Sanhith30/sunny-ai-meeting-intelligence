@@ -1,0 +1,42 @@
+# Sunny AI - Minimal Railway Deployment
+# Absolute minimum for Railway deployment
+
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install only essential system packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy application first
+COPY . .
+
+# Install Python packages one by one
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir python-dotenv pyyaml && \
+    pip install --no-cache-dir pydantic fastapi uvicorn && \
+    pip install --no-cache-dir jinja2 httpx aiosqlite && \
+    pip install --no-cache-dir tenacity structlog && \
+    pip install --no-cache-dir numpy soundfile && \
+    pip install --no-cache-dir faster-whisper && \
+    pip install --no-cache-dir google-generativeai && \
+    pip install --no-cache-dir reportlab && \
+    pip install --no-cache-dir playwright && \
+    playwright install chromium
+
+# Create directories
+RUN mkdir -p outputs temp data logs
+
+ENV PORT=8000
+ENV HOST=0.0.0.0
+
+EXPOSE 8000
+
+CMD ["python", "-m", "uvicorn", "web.app:app", "--host", "0.0.0.0", "--port", "8000"]
