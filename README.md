@@ -22,12 +22,12 @@
   <img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI"/>
   <img src="https://img.shields.io/badge/Google_Gemini-4285F4?style=flat-square&logo=google&logoColor=white" alt="Gemini"/>
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License"/>
-  <img src="https://img.shields.io/github/stars/yourusername/sunny-ai?style=flat-square" alt="Stars"/>
+  <img src="https://img.shields.io/github/stars/Sanhith30/sunny-ai-meeting-intelligence?style=flat-square" alt="Stars"/>
   <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square" alt="PRs Welcome"/>
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/yourusername/sunny-ai/main/docs/demo.gif" alt="Sunny AI Demo" width="800"/>
+  <img src="https://raw.githubusercontent.com/Sanhith30/sunny-ai-meeting-intelligence/main/docs/demo.gif" alt="Sunny AI Demo" width="800"/>
 </p>
 
 ---
@@ -267,14 +267,14 @@ sunny_ai/
 
 ### Option 1: One-Click Deploy (Recommended)
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/sunny-ai)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/sunny-ai-meeting-intelligence)
 
 ### Option 2: Local Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/sunny-ai.git
-cd sunny-ai
+git clone https://github.com/Sanhith30/sunny-ai-meeting-intelligence.git
+cd sunny-ai-meeting-intelligence
 
 # Create virtual environment
 python -m venv venv
@@ -481,7 +481,7 @@ We'd love to hear from you! Your feedback helps us improve.
 
 ### 📝 Share Your Experience
 
-<a href="https://github.com/yourusername/sunny-ai/issues/new?template=feedback.md&title=[FEEDBACK]">
+<a href="https://github.com/Sanhith30/sunny-ai-meeting-intelligence/issues/new?template=feedback.md&title=[FEEDBACK]">
   <img src="https://img.shields.io/badge/📝_Give_Feedback-blue?style=for-the-badge" alt="Give Feedback"/>
 </a>
 
@@ -496,11 +496,11 @@ If Sunny AI helped you, please consider:
 
 ### 🐛 Report Issues
 
-Found a bug? [Open an issue](https://github.com/yourusername/sunny-ai/issues/new?template=bug_report.md)
+Found a bug? [Open an issue](https://github.com/Sanhith30/sunny-ai-meeting-intelligence/issues/new?template=bug_report.md)
 
 ### 💡 Request Features
 
-Have an idea? [Request a feature](https://github.com/yourusername/sunny-ai/issues/new?template=feature_request.md)
+Have an idea? [Request a feature](https://github.com/Sanhith30/sunny-ai-meeting-intelligence/issues/new?template=feature_request.md)
 
 ---
 
@@ -535,13 +535,13 @@ copies of the Software...
 ## 📞 Contact & Support
 
 <p align="center">
-  <a href="https://github.com/yourusername">
+  <a href="https://github.com/Sanhith30">
     <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
   </a>
-  <a href="https://twitter.com/yourusername">
+  <a href="https://twitter.com/Sanhith30">
     <img src="https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" alt="Twitter"/>
   </a>
-  <a href="https://linkedin.com/in/yourusername">
+  <a href="https://linkedin.com/in/Sanhith30">
     <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
   </a>
 </p>
