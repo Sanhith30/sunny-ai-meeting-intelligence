@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunny AI - Your AI Meeting Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    colors: {
+                        dark: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617' },
+                        sunny: { 50: '#fffbeb', 100: '#fef3c7', 200: '#fde68a', 300: '#fcd34d', 400: '#fbbf24', 500: '#f59e0b' }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'gradient': 'gradient 8s ease infinite',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'bounce-subtle': 'bounceSubtle 2s ease-in-out infinite',
+                        'spin-slow': 'spin 3s linear infinite',
+                        'shimmer': 'shimmer 2s linear infinite'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(2deg); } }
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes bounceSubtle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.4); opacity: 0; } }
+        @keyframes checkmark { 0% { stroke-dashoffset: 100; } 100% { stroke-dashoffset: 0; } }
+        
+        .gradient-text { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .gradient-bg { background: linear-gradient(-45deg, #6366f1, #8b5cf6, #a855f7, #6366f1); background-size: 400% 400%; animation: gradient 8s ease infinite; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-light { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.05); }
+        
+        .dark .glass { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); }
+        html:not(.dark) .glass { background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0, 0, 0, 0.08); }
+        
+        .glow { box-shadow: 0 0 60px rgba(99, 102, 241, 0.3), 0 0 100px rgba(139, 92, 246, 0.2); }
+        .glow-sm { box-shadow: 0 0 30px rgba(99, 102, 241, 0.2); }
+        
+        .btn-primary { position: relative; overflow: hidden; transition: all 0.3s ease; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4); }
+        .btn-primary:active { transform: translateY(0) scale(0.98); }
+        .btn-primary .ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.4); animation: ripple 0.6s linear; pointer-events: none; }
+        
+        .input-glow:focus { box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), 0 0 20px rgba(99, 102, 241, 0.1); }
+        
+        .timeline-dot { position: relative; }
+        .timeline-dot::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; background: currentColor; opacity: 0.2; animation: pulse-ring 2s ease-out infinite; }
+        .timeline-dot.active::before { animation: pulse-ring 1.5s ease-out infinite; }
+        
+        .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        
+        .floating-assistant { transition: all 0.3s ease; }
+        .floating-assistant:hover { transform: scale(1.1) rotate(5deg); }
+        
+        .toast { animation: slideUp 0.4s ease-out, fadeIn 0.3s ease-out; }
+        
+        .checkmark-svg { stroke-dasharray: 100; stroke-dashoffset: 100; animation: checkmark 0.5s ease-out forwards; }
+        
+        .shimmer { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); background-size: 200% 100%; animation: shimmer 2s linear infinite; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.5); }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased transition-colors duration-300 dark:bg-dark-900 dark:text-white bg-dark-50 text-dark-900">
+    <!-- Background Effects -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-indigo-500/5 to-purple-500/5 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center shadow-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold gradient-text">Sunny AI</span>
+                </div>
+                
+                <!-- Nav Items -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#features" class="text-sm font-medium text-dark-500 dark:text-dark-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors">Features</a>
+                    <a href="#how-it-works" class="text-sm font-medium text-dark-500 dark:text-dark-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors">How it Works</a>
+                    <a href="/docs" class="text-sm font-medium text-dark-500 dark:text-dark-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors">API Docs</a>
+                </div>
+                
+                <!-- Theme Toggle -->
+                <div class="flex items-center gap-4">
+                    <button id="themeToggle" class="p-2 rounded-lg hover:bg-dark-100 dark:hover:bg-dark-800 transition-colors" aria-label="Toggle theme">
+                        <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                    </button>
+                    <a href="/docs" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white gradient-bg rounded-lg hover:opacity-90 transition-opacity">
+                        <span>API</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <main class="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 animate-fade-in">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-sm font-medium text-dark-600 dark:text-dark-300">AI-Powered Meeting Intelligence</span>
+            </div>
+            
+            <!-- Headline -->
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 animate-slide-up">
+                Your AI assistant that<br>
+                <span class="gradient-text">attends meetings for you</span>
+            </h1>
+            
+            <!-- Subheadline -->
+            <p class="text-lg sm:text-xl text-dark-500 dark:text-dark-400 max-w-2xl mx-auto mb-12 animate-slide-up" style="animation-delay: 0.1s">
+                Sunny AI joins your Zoom or Google Meet calls, listens carefully, and delivers professional summaries with action items — automatically.
+            </p>
+            
+            <!-- Main Card -->
+            <div id="mainCard" class="relative max-w-2xl mx-auto animate-slide-up" style="animation-delay: 0.2s">
+                <div class="absolute inset-0 gradient-bg rounded-3xl blur-xl opacity-20"></div>
+                <div class="relative glass rounded-3xl p-8 sm:p-10 glow card-hover">
+                    <!-- Input Form -->
+                    <div id="inputForm">
+                        <!-- Platform Detection Badge -->
+                        <div id="platformBadge" class="hidden items-center justify-center gap-2 mb-6">
+                            <div id="platformIcon" class="w-8 h-8 rounded-lg flex items-center justify-center"></div>
+                            <span id="platformName" class="text-sm font-medium"></span>
+                        </div>
+                        
+                        <!-- Meeting Link Input -->
+                        <div class="relative mb-6">
+                            <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-dark-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                                </svg>
+                            </div>
+                            <input type="url" id="meetingUrl" placeholder="Paste your Zoom or Google Meet link here..." 
+                                class="w-full pl-12 pr-4 py-4 text-lg rounded-2xl border-2 border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-800 focus:border-indigo-500 dark:focus:border-indigo-500 focus:outline-none input-glow transition-all duration-300"
+                                autocomplete="off">
+                            <div id="urlError" class="hidden absolute -bottom-6 left-0 text-sm text-red-500 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span id="urlErrorText"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Email Input -->
+                        <div class="relative mb-6 mt-8">
+                            <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-dark-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <input type="email" id="recipientEmail" placeholder="Your email for the summary..." 
+                                class="w-full pl-12 pr-4 py-4 text-lg rounded-2xl border-2 border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-800 focus:border-indigo-500 dark:focus:border-indigo-500 focus:outline-none input-glow transition-all duration-300"
+                                autocomplete="email">
+                        </div>
+                        
+                        <!-- Options -->
+                        <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <div class="relative">
+                                    <input type="checkbox" id="sendEmail" checked class="sr-only peer">
+                                    <div class="w-11 h-6 bg-dark-200 dark:bg-dark-700 rounded-full peer-checked:bg-indigo-500 transition-colors"></div>
+                                    <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+                                </div>
+                                <span class="text-sm text-dark-600 dark:text-dark-400 group-hover:text-dark-900 dark:group-hover:text-white transition-colors">Send summary to email</span>
+                            </label>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <button id="submitBtn" onclick="startMeeting()" class="w-full py-4 px-8 text-lg font-semibold text-white gradient-bg rounded-2xl btn-primary flex items-center justify-center gap-3">
+                            <span>Let Sunny Attend</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Status Timeline (Hidden by default) -->
+                    <div id="statusTimeline" class="hidden">
+                        <div class="text-center mb-8">
+                            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full gradient-bg mb-4 animate-bounce-subtle">
+                                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">Sunny is working...</h3>
+                            <p id="currentStatus" class="text-dark-500 dark:text-dark-400">Preparing to join the meeting</p>
+                        </div>
+                        
+                        <!-- Timeline -->
+                        <div class="space-y-4">
+                            <div class="timeline-item flex items-center gap-4 p-4 rounded-xl transition-all duration-300" data-step="joining">
+                                <div class="timeline-dot w-10 h-10 rounded-full flex items-center justify-center bg-dark-100 dark:bg-dark-800 text-dark-400">
+                                    <svg class="w-5 h-5 step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 check-icon hidden text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 spinner-icon hidden animate-spin" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium">Joining meeting</p>
+                                    <p class="text-sm text-dark-500 dark:text-dark-400">Sunny is entering the call</p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item flex items-center gap-4 p-4 rounded-xl transition-all duration-300" data-step="recording">
+                                <div class="timeline-dot w-10 h-10 rounded-full flex items-center justify-center bg-dark-100 dark:bg-dark-800 text-dark-400">
+                                    <svg class="w-5 h-5 step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 check-icon hidden text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 spinner-icon hidden animate-spin" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium">Listening to meeting</p>
+                                    <p class="text-sm text-dark-500 dark:text-dark-400">Recording audio in progress</p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item flex items-center gap-4 p-4 rounded-xl transition-all duration-300" data-step="transcribing">
+                                <div class="timeline-dot w-10 h-10 rounded-full flex items-center justify-center bg-dark-100 dark:bg-dark-800 text-dark-400">
+                                    <svg class="w-5 h-5 step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 check-icon hidden text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 spinner-icon hidden animate-spin" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium">Transcribing audio</p>
+                                    <p class="text-sm text-dark-500 dark:text-dark-400">Converting speech to text</p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item flex items-center gap-4 p-4 rounded-xl transition-all duration-300" data-step="summarizing">
+                                <div class="timeline-dot w-10 h-10 rounded-full flex items-center justify-center bg-dark-100 dark:bg-dark-800 text-dark-400">
+                                    <svg class="w-5 h-5 step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 check-icon hidden text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 spinner-icon hidden animate-spin" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium">Analyzing & summarizing</p>
+                                    <p class="text-sm text-dark-500 dark:text-dark-400">AI is extracting key insights</p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item flex items-center gap-4 p-4 rounded-xl transition-all duration-300" data-step="generating_pdf">
+                                <div class="timeline-dot w-10 h-10 rounded-full flex items-center justify-center bg-dark-100 dark:bg-dark-800 text-dark-400">
+                                    <svg class="w-5 h-5 step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 check-icon hidden text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 spinner-icon hidden animate-spin" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium">Generating PDF report</p>
+                                    <p class="text-sm text-dark-500 dark:text-dark-400">Creating professional summary</p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item flex items-center gap-4 p-4 rounded-xl transition-all duration-300" data-step="sending_email">
+                                <div class="timeline-dot w-10 h-10 rounded-full flex items-center justify-center bg-dark-100 dark:bg-dark-800 text-dark-400">
+                                    <svg class="w-5 h-5 step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 check-icon hidden text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 spinner-icon hidden animate-spin" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium">Sending email</p>
+                                    <p class="text-sm text-dark-500 dark:text-dark-400">Delivering summary to your inbox</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Stop Button -->
+                        <button id="stopBtn" onclick="stopMeeting()" class="mt-8 w-full py-3 px-6 text-sm font-medium text-red-500 border-2 border-red-500/30 hover:bg-red-500/10 rounded-xl transition-all duration-300">
+                            Stop Meeting
+                        </button>
+                    </div>
+                    <!-- Success State -->
+                    <div id="successState" class="hidden text-center">
+                        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-green-500/20 mb-6">
+                            <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path class="checkmark-svg" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">All Done!</h3>
+                        <p class="text-dark-500 dark:text-dark-400 mb-8">Your meeting summary is ready</p>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-8">
+                            <a id="downloadPdfBtn" href="#" class="flex items-center justify-center gap-2 py-3 px-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <span>Download PDF</span>
+                            </a>
+                            <button onclick="viewSummary()" class="flex items-center justify-center gap-2 py-3 px-4 border-2 border-dark-200 dark:border-dark-700 hover:border-indigo-500 dark:hover:border-indigo-500 rounded-xl transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                <span>View Summary</span>
+                            </button>
+                        </div>
+                        
+                        <button onclick="resetForm()" class="text-sm text-indigo-500 hover:text-indigo-600 font-medium">
+                            ← Start another meeting
+                        </button>
+                    </div>
+                    
+                    <!-- Privacy Note -->
+                    <p class="mt-8 text-xs text-center text-dark-400">
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                        Sunny AI identifies itself as an AI assistant. Recording consent is required from all participants.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4">Powerful AI Features</h2>
+                <p class="text-dark-500 dark:text-dark-400 max-w-2xl mx-auto">Everything you need to never miss a meeting insight again</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass rounded-2xl p-8 card-hover">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Speaker Diarization</h3>
+                    <p class="text-dark-500 dark:text-dark-400">Automatically identifies and labels different speakers throughout the meeting</p>
+                </div>
+                
+                <div class="glass rounded-2xl p-8 card-hover">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Meeting Analytics</h3>
+                    <p class="text-dark-500 dark:text-dark-400">Comprehensive metrics including participation balance, sentiment, and engagement</p>
+                </div>
+                
+                <div class="glass rounded-2xl p-8 card-hover">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Action Items</h3>
+                    <p class="text-dark-500 dark:text-dark-400">Extracts tasks, owners, deadlines, and priorities automatically</p>
+                </div>
+                
+                <div class="glass rounded-2xl p-8 card-hover">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Sentiment Analysis</h3>
+                    <p class="text-dark-500 dark:text-dark-400">Detects emotional tone, conflicts, and agreement levels in discussions</p>
+                </div>
+                
+                <div class="glass rounded-2xl p-8 card-hover">
+                    <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Topic Timeline</h3>
+                    <p class="text-dark-500 dark:text-dark-400">Segments meetings into distinct topics with timestamps and summaries</p>
+                </div>
+                
+                <div class="glass rounded-2xl p-8 card-hover">
+                    <div class="w-12 h-12 rounded-xl bg-rose-500/20 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Meeting Memory</h3>
+                    <p class="text-dark-500 dark:text-dark-400">RAG-powered search to query insights from all your past meetings</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- How it Works Section -->
+    <section id="how-it-works" class="py-20 px-4 sm:px-6 lg:px-8 bg-dark-100/50 dark:bg-dark-800/50">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4">How it Works</h2>
+                <p class="text-dark-500 dark:text-dark-400">Three simple steps to meeting freedom</p>
+            </div>
+            
+            <div class="space-y-8">
+                <div class="flex items-start gap-6">
+                    <div class="flex-shrink-0 w-12 h-12 rounded-full gradient-bg flex items-center justify-center text-white font-bold text-lg">1</div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Paste your meeting link</h3>
+                        <p class="text-dark-500 dark:text-dark-400">Simply copy your Zoom or Google Meet link and paste it into Sunny AI. We automatically detect the platform.</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start gap-6">
+                    <div class="flex-shrink-0 w-12 h-12 rounded-full gradient-bg flex items-center justify-center text-white font-bold text-lg">2</div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Sunny joins and listens</h3>
+                        <p class="text-dark-500 dark:text-dark-400">Our AI assistant joins the meeting as "Sunny AI – Assistant", listens to the entire conversation, and takes notes.</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start gap-6">
+                    <div class="flex-shrink-0 w-12 h-12 rounded-full gradient-bg flex items-center justify-center text-white font-bold text-lg">3</div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Get your summary</h3>
+                        <p class="text-dark-500 dark:text-dark-400">Receive a professional PDF report with executive summary, key points, decisions, action items, and analytics — delivered to your inbox.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 sm:px-6 lg:px-8 border-t border-dark-200 dark:border-dark-800">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                    </div>
+                    <span class="font-semibold">Sunny AI</span>
+                </div>
+                
+                <div class="flex items-center gap-6 text-sm text-dark-500 dark:text-dark-400">
+                    <a href="/docs" class="hover:text-indigo-500 transition-colors">API Documentation</a>
+                    <a href="#" class="hover:text-indigo-500 transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-indigo-500 transition-colors">Terms of Service</a>
+                </div>
+                
+                <p class="text-sm text-dark-400">© 2026 Sunny AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- Floating Assistant -->
+    <div id="floatingAssistant" class="fixed bottom-6 right-6 z-50 floating-assistant">
+        <div class="relative">
+            <div class="absolute inset-0 gradient-bg rounded-full blur-lg opacity-50 animate-pulse-slow"></div>
+            <button class="relative w-14 h-14 rounded-full gradient-bg flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow animate-float">
+                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+            </button>
+            <span id="assistantStatus" class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-500 border-2 border-white dark:border-dark-900"></span>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-20 right-4 z-50 space-y-3"></div>
+
+    <!-- Summary Modal -->
+    <div id="summaryModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeSummaryModal()"></div>
+        <div class="absolute inset-4 md:inset-10 lg:inset-20 glass rounded-3xl overflow-hidden flex flex-col animate-slide-up">
+            <div class="flex items-center justify-between p-6 border-b border-dark-200 dark:border-dark-700">
+                <h3 class="text-xl font-bold">Meeting Summary</h3>
+                <button onclick="closeSummaryModal()" class="p-2 hover:bg-dark-100 dark:hover:bg-dark-800 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="summaryContent" class="flex-1 overflow-auto p-6">
+                <!-- Summary content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- API Key Modal -->
+    <div id="apiKeyModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="glass rounded-3xl p-8 max-w-md w-full animate-slide-up">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">API Key Required</h3>
+                    <p class="text-dark-500 dark:text-dark-400 text-sm">Enter your Gemini API key to enable AI summarization</p>
+                </div>
+                
+                <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key..." 
+                    class="w-full px-4 py-3 rounded-xl border-2 border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-800 focus:border-indigo-500 focus:outline-none mb-4">
+                
+                <button onclick="saveApiKey()" class="w-full py-3 px-6 text-white gradient-bg rounded-xl font-medium btn-primary">
+                    Save API Key
+                </button>
+                
+                <p class="mt-4 text-xs text-center text-dark-400">
+                    Get your API key from <a href="https://aistudio.google.com/apikey" target="_blank" class="text-indigo-500 hover:underline">Google AI Studio</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <script>
+        // State
+        let currentSessionId = null;
+        let statusPollInterval = null;
+        let isDarkMode = true;
+
+        // Theme Toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            document.documentElement.classList.toggle('dark', isDarkMode);
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        });
+
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'light') {
+            isDarkMode = false;
+            document.documentElement.classList.remove('dark');
+        }
+
+        // Platform Detection
+        const meetingUrlInput = document.getElementById('meetingUrl');
+        meetingUrlInput.addEventListener('input', (e) => {
+            const url = e.target.value;
+            const platformBadge = document.getElementById('platformBadge');
+            const platformIcon = document.getElementById('platformIcon');
+            const platformName = document.getElementById('platformName');
+            
+            if (url.includes('zoom.us') || url.includes('zoom.com')) {
+                platformBadge.classList.remove('hidden');
+                platformBadge.classList.add('flex');
+                platformIcon.innerHTML = '<svg class="w-5 h-5 text-blue-500" viewBox="0 0 24 24" fill="currentColor"><path d="M4.585 6.836A2.25 2.25 0 016.75 5.25h6a2.25 2.25 0 012.25 2.25v4.5a2.25 2.25 0 01-2.25 2.25h-6a2.25 2.25 0 01-2.25-2.25v-4.5a.75.75 0 011.5 0v4.5c0 .414.336.75.75.75h6a.75.75 0 00.75-.75v-4.5a.75.75 0 00-.75-.75h-6a.75.75 0 00-.665.404l-.085.182v.164h-.75v-.75c0-.199.026-.392.075-.576z"/><path d="M16.5 9.75l3.22-2.415a.75.75 0 011.28.53v8.27a.75.75 0 01-1.28.53L16.5 14.25v-4.5z"/></svg>';
+                platformIcon.className = 'w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center';
+                platformName.textContent = 'Zoom Meeting Detected';
+                platformName.className = 'text-sm font-medium text-blue-500';
+            } else if (url.includes('meet.google.com')) {
+                platformBadge.classList.remove('hidden');
+                platformBadge.classList.add('flex');
+                platformIcon.innerHTML = '<svg class="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+                platformIcon.className = 'w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center';
+                platformName.textContent = 'Google Meet Detected';
+                platformName.className = 'text-sm font-medium text-green-500';
+            } else {
+                platformBadge.classList.add('hidden');
+                platformBadge.classList.remove('flex');
+            }
+            
+            // Clear error
+            document.getElementById('urlError').classList.add('hidden');
+        });
+
+        // Validate URL
+        function validateUrl(url) {
+            if (!url) return { valid: false, error: 'Please enter a meeting link' };
+            if (!url.includes('zoom.us') && !url.includes('zoom.com') && !url.includes('meet.google.com')) {
+                return { valid: false, error: 'Please enter a valid Zoom or Google Meet link' };
+            }
+            return { valid: true };
+        }
+
+        // Validate Email
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Show Toast
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-indigo-500',
+                warning: 'bg-amber-500'
+            };
+            
+            const icons = {
+                success: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>',
+                error: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>',
+                info: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+                warning: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>'
+            };
+            
+            toast.className = `toast flex items-center gap-3 px-4 py-3 rounded-xl ${colors[type]} text-white shadow-lg`;
+            toast.innerHTML = `
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">${icons[type]}</svg>
+                <span class="text-sm font-medium">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+        // Check API Key on load
+        async function checkApiKey() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                if (!data.gemini_configured || !data.llm_available) {
+                    document.getElementById('apiKeyModal').classList.remove('hidden');
+                } else {
+                    // API key is already configured, hide modal
+                    document.getElementById('apiKeyModal').classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Health check failed:', error);
+            }
+        }
+
+        // Save API Key
+        async function saveApiKey() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            
+            if (!apiKey) {
+                showToast('Please enter an API key', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/config/apikey', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ api_key: apiKey })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    document.getElementById('apiKeyModal').classList.add('hidden');
+                    showToast('API key configured successfully!', 'success');
+                } else {
+                    showToast(data.message || 'Invalid API key', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to save API key', 'error');
+            }
+        }
+
+        // Start Meeting
+        async function startMeeting() {
+            const url = document.getElementById('meetingUrl').value.trim();
+            const email = document.getElementById('recipientEmail').value.trim();
+            const sendEmail = document.getElementById('sendEmail').checked;
+            
+            // Validate
+            const urlValidation = validateUrl(url);
+            if (!urlValidation.valid) {
+                document.getElementById('urlError').classList.remove('hidden');
+                document.getElementById('urlErrorText').textContent = urlValidation.error;
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showToast('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            // Add ripple effect
+            const btn = document.getElementById('submitBtn');
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            ripple.style.left = '50%';
+            ripple.style.top = '50%';
+            btn.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+            
+            // Disable button
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Starting...</span>
+            `;
+            
+            try {
+                const response = await fetch('/api/meetings/join', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        meeting_url: url,
+                        recipient_email: email,
+                        send_email: sendEmail
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentSessionId = data.session_id;
+                    showTimeline();
+                    startStatusPolling();
+                    showToast('Sunny is joining the meeting!', 'success');
+                    updateAssistantStatus('active');
+                } else {
+                    throw new Error(data.detail || 'Failed to start meeting');
+                }
+            } catch (error) {
+                showToast(error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = `
+                    <span>Let Sunny Attend</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                    </svg>
+                `;
+            }
+        }
+
+        // Show Timeline
+        function showTimeline() {
+            document.getElementById('inputForm').classList.add('hidden');
+            document.getElementById('statusTimeline').classList.remove('hidden');
+        }
+
+        // Update Timeline Step
+        function updateTimelineStep(step, status) {
+            const item = document.querySelector(`[data-step="${step}"]`);
+            if (!item) return;
+            
+            const dot = item.querySelector('.timeline-dot');
+            const stepIcon = item.querySelector('.step-icon');
+            const checkIcon = item.querySelector('.check-icon');
+            const spinnerIcon = item.querySelector('.spinner-icon');
+            
+            // Reset all icons
+            stepIcon.classList.add('hidden');
+            checkIcon.classList.add('hidden');
+            spinnerIcon.classList.add('hidden');
+            
+            if (status === 'active') {
+                dot.classList.add('active');
+                dot.classList.remove('bg-dark-100', 'dark:bg-dark-800', 'text-dark-400');
+                dot.classList.add('gradient-bg', 'text-white');
+                spinnerIcon.classList.remove('hidden');
+                item.classList.add('bg-indigo-500/10');
+            } else if (status === 'completed') {
+                dot.classList.remove('active', 'bg-dark-100', 'dark:bg-dark-800', 'text-dark-400');
+                dot.classList.add('bg-green-500', 'text-white');
+                checkIcon.classList.remove('hidden');
+                item.classList.remove('bg-indigo-500/10');
+            } else {
+                dot.classList.remove('active', 'gradient-bg', 'bg-green-500');
+                dot.classList.add('bg-dark-100', 'dark:bg-dark-800', 'text-dark-400');
+                stepIcon.classList.remove('hidden');
+                item.classList.remove('bg-indigo-500/10');
+            }
+        }
+        // Status Polling
+        function startStatusPolling() {
+            statusPollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api/meetings/${currentSessionId}/status`);
+                    const data = await response.json();
+                    
+                    updateStatus(data.status);
+                    
+                    if (data.status === 'completed') {
+                        stopStatusPolling();
+                        showSuccess();
+                    } else if (data.status === 'error') {
+                        stopStatusPolling();
+                        showToast('An error occurred during processing', 'error');
+                        resetForm();
+                    }
+                } catch (error) {
+                    console.error('Status poll error:', error);
+                }
+            }, 2000);
+        }
+
+        function stopStatusPolling() {
+            if (statusPollInterval) {
+                clearInterval(statusPollInterval);
+                statusPollInterval = null;
+            }
+        }
+
+        // Update Status
+        function updateStatus(status) {
+            const statusText = document.getElementById('currentStatus');
+            const steps = ['joining', 'recording', 'transcribing', 'summarizing', 'generating_pdf', 'sending_email'];
+            
+            const statusMap = {
+                'starting': { text: 'Preparing to join...', step: -1 },
+                'joining': { text: 'Joining the meeting...', step: 0 },
+                'recording': { text: 'Listening to the meeting...', step: 1 },
+                'processing': { text: 'Processing recording...', step: 1 },
+                'transcribing': { text: 'Transcribing audio...', step: 2 },
+                'diarizing': { text: 'Identifying speakers...', step: 2 },
+                'segmenting_topics': { text: 'Analyzing topics...', step: 3 },
+                'analyzing_sentiment': { text: 'Analyzing sentiment...', step: 3 },
+                'summarizing': { text: 'Generating summary...', step: 3 },
+                'extracting_actions': { text: 'Extracting action items...', step: 3 },
+                'generating_analytics': { text: 'Generating analytics...', step: 3 },
+                'generating_pdf': { text: 'Creating PDF report...', step: 4 },
+                'storing_memory': { text: 'Storing in memory...', step: 4 },
+                'generating_followup': { text: 'Generating follow-up email...', step: 5 },
+                'sending_email': { text: 'Sending email...', step: 5 },
+                'completed': { text: 'All done!', step: 6 }
+            };
+            
+            const current = statusMap[status] || { text: status, step: -1 };
+            statusText.textContent = current.text;
+            
+            // Update timeline
+            steps.forEach((step, index) => {
+                if (index < current.step) {
+                    updateTimelineStep(step, 'completed');
+                } else if (index === current.step) {
+                    updateTimelineStep(step, 'active');
+                } else {
+                    updateTimelineStep(step, 'pending');
+                }
+            });
+        }
+
+        // Show Success
+        function showSuccess() {
+            document.getElementById('statusTimeline').classList.add('hidden');
+            document.getElementById('successState').classList.remove('hidden');
+            document.getElementById('downloadPdfBtn').href = `/api/meetings/${currentSessionId}/pdf`;
+            updateAssistantStatus('success');
+            showToast('Meeting summary is ready!', 'success');
+        }
+
+        // Stop Meeting
+        async function stopMeeting() {
+            if (!currentSessionId) return;
+            
+            try {
+                await fetch(`/api/meetings/${currentSessionId}/stop`, { method: 'POST' });
+                stopStatusPolling();
+                showToast('Meeting stopped', 'info');
+                resetForm();
+            } catch (error) {
+                showToast('Failed to stop meeting', 'error');
+            }
+        }
+
+        // Reset Form
+        function resetForm() {
+            document.getElementById('inputForm').classList.remove('hidden');
+            document.getElementById('statusTimeline').classList.add('hidden');
+            document.getElementById('successState').classList.add('hidden');
+            
+            // Reset button
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = false;
+            btn.innerHTML = `
+                <span>Let Sunny Attend</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+            `;
+            
+            // Reset timeline
+            document.querySelectorAll('.timeline-item').forEach(item => {
+                const step = item.dataset.step;
+                updateTimelineStep(step, 'pending');
+            });
+            
+            currentSessionId = null;
+            updateAssistantStatus('idle');
+        }
+
+        // View Summary
+        async function viewSummary() {
+            if (!currentSessionId) return;
+            
+            try {
+                const response = await fetch(`/api/meetings/${currentSessionId}/summary`);
+                const data = await response.json();
+                
+                const content = document.getElementById('summaryContent');
+                content.innerHTML = `
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Executive Summary
+                            </h4>
+                            <p class="text-dark-600 dark:text-dark-300 leading-relaxed">${data.executive_summary || 'No summary available'}</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                                Key Discussion Points
+                            </h4>
+                            <ul class="space-y-2">
+                                ${(data.key_points || []).map(point => `
+                                    <li class="flex items-start gap-2 text-dark-600 dark:text-dark-300">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500 mt-2 flex-shrink-0"></span>
+                                        ${point}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Decisions Made
+                            </h4>
+                            <ul class="space-y-2">
+                                ${(data.decisions || []).map(decision => `
+                                    <li class="flex items-start gap-2 text-dark-600 dark:text-dark-300">
+                                        <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        ${decision}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                </svg>
+                                Action Items
+                            </h4>
+                            <div class="space-y-3">
+                                ${(data.action_items || []).map(item => `
+                                    <div class="p-3 rounded-lg bg-dark-100 dark:bg-dark-800">
+                                        <p class="font-medium">${item.task}</p>
+                                        <div class="flex gap-4 mt-2 text-sm text-dark-500">
+                                            <span>Owner: ${item.owner || 'TBD'}</span>
+                                            <span>Due: ${item.deadline || 'TBD'}</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('summaryModal').classList.remove('hidden');
+            } catch (error) {
+                showToast('Failed to load summary', 'error');
+            }
+        }
+
+        function closeSummaryModal() {
+            document.getElementById('summaryModal').classList.add('hidden');
+        }
+
+        // Update Assistant Status
+        function updateAssistantStatus(status) {
+            const indicator = document.getElementById('assistantStatus');
+            indicator.classList.remove('bg-green-500', 'bg-amber-500', 'bg-indigo-500');
+            
+            if (status === 'active') {
+                indicator.classList.add('bg-amber-500');
+            } else if (status === 'success') {
+                indicator.classList.add('bg-green-500');
+            } else {
+                indicator.classList.add('bg-green-500');
+            }
+        }
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && document.activeElement.id === 'meetingUrl') {
+                document.getElementById('recipientEmail').focus();
+            } else if (e.key === 'Enter' && document.activeElement.id === 'recipientEmail') {
+                startMeeting();
+            } else if (e.key === 'Escape') {
+                closeSummaryModal();
+            }
+        });
+
+        // Initialize
+        checkApiKey();
+    </script>
+</body>
+</html>

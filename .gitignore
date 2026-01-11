@@ -1,0 +1,49 @@
+# Sunny AI .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+
+# Output directories
+outputs/
+temp/
+logs/
+data/
+
+# Audio files
+*.wav
+*.mp3
+*.m4a
+
+# PDF reports
+*.pdf
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Whisper models (large files)
+*.pt
+*.bin

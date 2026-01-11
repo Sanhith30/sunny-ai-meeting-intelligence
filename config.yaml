@@ -1,0 +1,100 @@
+# Sunny AI Configuration
+# ========================
+
+# General Settings
+general:
+  bot_name: "Sunny AI – Assistant"
+  log_level: "INFO"
+  output_dir: "./outputs"
+  temp_dir: "./temp"
+
+# Meeting Settings
+meeting:
+  max_duration_minutes: 180
+  waiting_room_timeout_seconds: 300
+  end_detection_interval_seconds: 10
+  auto_leave_on_end: true
+
+# Audio Settings
+audio:
+  sample_rate: 16000
+  channels: 1
+  format: "wav"
+  chunk_duration_seconds: 30
+
+# Transcription Settings (Whisper)
+transcription:
+  model_size: "medium"  # tiny, base, small, medium, large
+  language: "en"
+  device: "cpu"  # cpu or cuda
+  compute_type: "int8"  # float16, int8
+
+# Summarization Settings (Google Gemini)
+summarization:
+  provider: "gemini"  # gemini or ollama
+  gemini_api_key: "${GEMINI_API_KEY}"
+  gemini_model: "gemini-1.5-flash"  # gemini-1.5-flash, gemini-1.5-pro, gemini-2.0-flash
+  # Ollama fallback (optional)
+  ollama_base_url: "http://localhost:11434"
+  ollama_model: "llama3"
+  # Common settings
+  max_tokens: 2048
+  temperature: 0.3
+  chunk_size_tokens: 4000
+  overlap_tokens: 200
+
+# PDF Settings
+pdf:
+  font_family: "Helvetica"
+  title_font_size: 18
+  heading_font_size: 14
+  body_font_size: 11
+  margin: 50
+
+# Email Settings (Gmail SMTP)
+email:
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  sender_email: "${GMAIL_ADDRESS}"
+  sender_password: "${GMAIL_APP_PASSWORD}"
+  subject_template: "Meeting Summary - {date} - {platform}"
+
+# Browser Settings
+browser:
+  headless: false
+  timeout_ms: 30000
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+
+# Advanced Features Settings
+advanced_features:
+  # Speaker Diarization (requires pyannote.audio)
+  diarization_enabled: true
+  huggingface_token: "${HF_TOKEN}"
+  min_speakers: 1
+  max_speakers: 10
+  
+  # Topic Segmentation
+  topic_segmentation_enabled: true
+  min_topic_duration_seconds: 60
+  max_topics: 10
+  
+  # Sentiment Analysis
+  sentiment_enabled: true
+  sentiment_use_llm: true
+  
+  # Action Item Extraction
+  action_items_enabled: true
+  action_items_use_llm: true
+  
+  # Meeting Analytics
+  analytics_enabled: true
+  
+  # Follow-up Email Generator
+  followup_email_enabled: true
+  company_name: ""
+  sender_name: "Sunny AI"
+  
+  # RAG Memory System (requires chromadb)
+  rag_memory_enabled: true
+  memory_persist_dir: "./data/memory"
+  memory_collection: "meeting_memory"

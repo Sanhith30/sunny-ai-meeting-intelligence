@@ -1,0 +1,33 @@
+# Systemd service file for Sunny AI
+# Copy to: /etc/systemd/system/sunny-ai.service
+# Then run: sudo systemctl enable sunny-ai && sudo systemctl start sunny-ai
+
+[Unit]
+Description=Sunny AI - Autonomous Meeting Assistant
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/sunny-ai
+Environment=PATH=/home/ubuntu/sunny-ai/venv/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=/home/ubuntu/sunny-ai/.env
+
+ExecStart=/home/ubuntu/sunny-ai/venv/bin/python -m web.app
+ExecReload=/bin/kill -HUP $MAINPID
+
+Restart=always
+RestartSec=10
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Logging
+StandardOutput=append:/home/ubuntu/sunny-ai/logs/sunny-ai.log
+StandardError=append:/home/ubuntu/sunny-ai/logs/sunny-ai-error.log
+
+[Install]
+WantedBy=multi-user.target
