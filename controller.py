@@ -18,16 +18,51 @@ from pdf.pdf_generator import PDFGenerator
 from email_sender.gmail_sender import GmailSender
 from database.storage import MeetingStorage, MeetingRecord
 
-# Advanced Features
-from advanced_features import (
-    SpeakerDiarizer,
-    TopicSegmenter,
-    SentimentAnalyzer,
-    ActionItemExtractor,
-    MeetingAnalytics,
-    FollowupEmailGenerator,
-    MeetingMemory
-)
+# Advanced Features - import with fallback
+try:
+    from advanced_features import (
+        SpeakerDiarizer,
+        TopicSegmenter,
+        SentimentAnalyzer,
+        ActionItemExtractor,
+        MeetingAnalytics,
+        FollowupEmailGenerator,
+        MeetingMemory
+    )
+    ADVANCED_FEATURES_AVAILABLE = True
+except ImportError as e:
+    logger = structlog.get_logger(__name__)
+    logger.warning(f"Advanced features not available: {e}")
+    ADVANCED_FEATURES_AVAILABLE = False
+    # Create dummy classes
+    class SpeakerDiarizer:
+        def __init__(self, config): pass
+        async def initialize(self): pass
+        async def diarize(self, audio_file): return None
+    class TopicSegmenter:
+        def __init__(self, config, summarizer): pass
+        async def segment_topics(self, text, segments): return None
+    class SentimentAnalyzer:
+        def __init__(self, config, summarizer): pass
+        async def initialize(self): pass
+        async def analyze(self, text, segments): return None
+    class ActionItemExtractor:
+        def __init__(self, config, summarizer): pass
+        async def extract(self, text, segments): return None
+    class MeetingAnalytics:
+        def __init__(self, config): pass
+        def generate_metrics(self, **kwargs): return None
+        def to_dict(self, metrics): return {}
+    class FollowupEmailGenerator:
+        def __init__(self, config, summarizer): pass
+        async def generate(self, **kwargs): return None
+    class MeetingMemory:
+        def __init__(self, config): 
+            self._initialized = False
+        async def initialize(self): pass
+        async def store_meeting(self, **kwargs): pass
+        async def search(self, query, n_results, doc_type): return []
+        async def query_with_llm(self, question, summarizer): return "Memory not available"
 
 logger = structlog.get_logger(__name__)
 
@@ -63,31 +98,53 @@ class SunnyAIController:
         """Initialize all components."""
         logger.info("Initializing Sunny AI Controller")
         
-        # Initialize database
-        await self.storage.initialize()
+        try:
+            # Initialize database
+            await self.storage.initialize()
+            logger.info("Database initialized")
+        except Exception as e:
+            logger.error(f"Database initialization failed: {e}")
         
-        # Check LLM availability
-        llm_available = await self.summarizer.check_available()
-        if not llm_available:
-            provider = self.config.get("summarization", {}).get("provider", "gemini")
-            if provider == "gemini":
-                logger.warning("Gemini API not available. Check your GEMINI_API_KEY.")
+        try:
+            # Check LLM availability
+            llm_available = await self.summarizer.check_available()
+            if not llm_available:
+                provider = self.config.get("summarization", {}).get("provider", "gemini")
+                if provider == "gemini":
+                    logger.warning("Gemini API not available. Check your GEMINI_API_KEY.")
+                else:
+                    logger.warning("Ollama not available. Summarization will fail.")
             else:
-                logger.warning("Ollama not available. Summarization will fail.")
+                logger.info(f"LLM provider ready: {self.summarizer.provider}")
+        except Exception as e:
+            logger.error(f"LLM check failed: {e}")
+        
+        # Initialize advanced features with error handling
+        if ADVANCED_FEATURES_AVAILABLE:
+            adv_config = self.config.get("advanced_features", {})
+            
+            try:
+                if adv_config.get("diarization_enabled", False):
+                    await self.diarizer.initialize()
+                    logger.info("Speaker diarization initialized")
+            except Exception as e:
+                logger.warning(f"Diarization initialization failed: {e}")
+            
+            try:
+                if adv_config.get("sentiment_enabled", False):
+                    await self.sentiment_analyzer.initialize()
+                    logger.info("Sentiment analyzer initialized")
+            except Exception as e:
+                logger.warning(f"Sentiment analyzer initialization failed: {e}")
+            
+            try:
+                if adv_config.get("rag_memory_enabled", False):
+                    await self.memory.initialize()
+                    logger.info("RAG memory initialized")
+            except Exception as e:
+                logger.warning(f"RAG memory initialization failed: {e}")
         else:
-            logger.info(f"LLM provider ready: {self.summarizer.provider}")
-        
-        # Initialize advanced features
-        adv_config = self.config.get("advanced_features", {})
-        
-        if adv_config.get("diarization_enabled", True):
-            await self.diarizer.initialize()
-        
-        if adv_config.get("sentiment_enabled", True):
-            await self.sentiment_analyzer.initialize()
-        
-        if adv_config.get("rag_memory_enabled", True):
-            await self.memory.initialize()
+            logger.info("Advanced features not available (minimal build)")
         
         logger.info("Sunny AI Controller initialized")
 

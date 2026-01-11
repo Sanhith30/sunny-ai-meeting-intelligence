@@ -90,22 +90,36 @@ async def home(request: Request):
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint."""
-    global controller
-    
-    gemini_configured = bool(os.getenv("GEMINI_API_KEY"))
-    llm_available = False
-    
-    if controller:
-        llm_available = await controller.summarizer.check_available()
-    
-    return {
-        "status": "healthy",
-        "service": "Sunny AI",
-        "timestamp": datetime.now().isoformat(),
-        "gemini_configured": gemini_configured,
-        "llm_available": llm_available,
-        "provider": config.get("summarization", {}).get("provider", "gemini")
-    }
+    try:
+        global controller
+        
+        gemini_configured = bool(os.getenv("GEMINI_API_KEY"))
+        llm_available = False
+        controller_ready = controller is not None
+        
+        if controller:
+            try:
+                llm_available = await controller.summarizer.check_available()
+            except Exception as e:
+                logger.warning(f"LLM check failed: {e}")
+        
+        return {
+            "status": "healthy",
+            "service": "Sunny AI",
+            "timestamp": datetime.now().isoformat(),
+            "gemini_configured": gemini_configured,
+            "llm_available": llm_available,
+            "controller_ready": controller_ready,
+            "provider": config.get("summarization", {}).get("provider", "gemini")
+        }
+    except Exception as e:
+        logger.error(f"Health check error: {e}")
+        return {
+            "status": "healthy",
+            "service": "Sunny AI",
+            "timestamp": datetime.now().isoformat(),
+            "error": str(e)
+        }
 
 
 @app.post("/api/config/apikey")
@@ -400,17 +414,34 @@ async def startup():
     """Initialize controller on startup."""
     global controller, config
     
-    setup_logging("INFO")
-    
     try:
-        config = load_config("config.yaml")
-    except FileNotFoundError:
-        config = get_default_config()
-    
-    controller = SunnyAIController(config)
-    await controller.initialize()
-    
-    logger.info("Sunny AI Web Server started")
+        setup_logging("INFO")
+        logger.info("Starting Sunny AI Web Server...")
+        
+        # Load config
+        try:
+            config = load_config("config.yaml")
+            logger.info("Config loaded from config.yaml")
+        except FileNotFoundError:
+            logger.warning("config.yaml not found, using defaults")
+            config = get_default_config()
+        
+        # Initialize controller with error handling
+        try:
+            controller = SunnyAIController(config)
+            await controller.initialize()
+            logger.info("Controller initialized successfully")
+        except Exception as e:
+            logger.error(f"Controller initialization failed: {e}")
+            logger.warning("Starting with limited functionality")
+            # Don't fail startup, just log the error
+            controller = None
+        
+        logger.info("Sunny AI Web Server started")
+        
+    except Exception as e:
+        logger.error(f"Startup error: {e}")
+        # Don't crash, allow health check to respond
 
 
 @app.on_event("shutdown")
