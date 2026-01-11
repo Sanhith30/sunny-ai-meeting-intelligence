@@ -39,7 +39,7 @@ Open this link in a new tab:
 
 ### Step 4: Copy Your Key
 
-1. Your API key will look like: `AIzaSyDzj-zA1meOofGGzjz9YB-mjc8yz19kAy4`
+1. Your API key will look like: `your api key`
 2. Click the **copy icon** to copy it
 3. Keep this key safe (treat it like a password)
 
