@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  sunny-ai:
+    build:
+      context: .
+      dockerfile: Dockerfile.minimal
+    container_name: sunny-ai
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GMAIL_ADDRESS=${GMAIL_ADDRESS}
+      - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
+      - HF_TOKEN=${HF_TOKEN}
+      - HOST=0.0.0.0
+      - PORT=8000
+      - ENVIRONMENT=production
+    volumes:
+      - ./outputs:/app/outputs
+      - ./data:/app/data
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+  # Optional: Nginx (if you want to run Nginx in Docker too)
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: sunny-ai-nginx
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./ssl:/etc/nginx/ssl:ro
+  #   depends_on:
+  #     - sunny-ai
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "3"
