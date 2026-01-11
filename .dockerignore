@@ -1,27 +1,60 @@
-# Git
-.git
-.gitignore
-
 # Python
-__pycache__
-*.pyc
-*.pyo
-venv
-.venv
-*.egg-info
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
 
 # IDE
-.vscode
-.idea
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
-# Local files
-.env
-*.log
-logs/
+# Git
+.git/
+.gitignore
+.github/
+
+# Documentation
+*.md
+docs/
+LICENSE
+
+# Data & Outputs
 outputs/
 temp/
 data/
+logs/
+*.wav
+*.mp3
+*.mp4
+*.pdf
 
-# Docs
-*.md
-!README.md
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Deployment files (keep only what's needed)
+Dockerfile
+docker-compose.yml
+railway.json
+fly.toml
+Procfile
