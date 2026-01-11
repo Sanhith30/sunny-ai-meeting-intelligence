@@ -525,15 +525,40 @@ curl -X POST "https://your-app.railway.app/api/meetings/join" \
 
 ## 🚢 Deployment Options
 
-| Platform | Cost | Difficulty | Best For |
-|----------|------|------------|----------|
-| **Railway** | Free | ⭐ Easy | Quick deploy |
-| **Render** | Free | ⭐ Easy | Reliable hosting |
-| **Fly.io** | Free | ⭐⭐ Medium | Performance |
-| **Google Cloud Run** | Free tier | ⭐⭐ Medium | Scalability |
-| **Self-hosted** | Server cost | ⭐⭐⭐ Advanced | Full control |
+### Choose Your Deployment Platform
 
-📚 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed guides.
+| Platform | Cost | Setup Time | All Features | Best For |
+|----------|------|------------|--------------|----------|
+| **🚀 AWS EC2** | $15-30/mo | 30 min | ✅ Yes | Production, 24/7 |
+| **🤗 Hugging Face** | Free/$0.60/hr | 5 min | ✅ Yes | Demos, Testing |
+| **🚂 Railway** | Free/$20-50/mo | 5 min | ⚠️ Limited | Small Teams |
+| **🐳 Self-hosted** | Server cost | 1 hour | ✅ Yes | Full Control |
+
+### 📚 Deployment Guides
+
+- **[🌐 Sharing Guide](SHARING_GUIDE.md)** - How to share Sunny AI with everyone
+- **[📊 Deployment Options](DEPLOYMENT_OPTIONS.md)** - Detailed comparison of all platforms
+- **[☁️ AWS EC2 Deployment](AWS_EC2_DEPLOYMENT.md)** - Production deployment on AWS
+- **[🤗 Hugging Face Spaces](HUGGINGFACE_DEPLOYMENT.md)** - Deploy with all features in 5 minutes
+- **[🚂 Railway Deployment](RAILWAY_DEPLOY.md)** - Quick deploy for small teams
+- **[⚡ Quick Deploy Guide](QUICK_DEPLOY.md)** - Get started in minutes
+
+### 🎯 Quick Recommendations
+
+**For Immediate Sharing:**
+```bash
+# Deploy to Hugging Face Spaces (5 minutes)
+# See HUGGINGFACE_DEPLOYMENT.md for full guide
+```
+
+**For Production Use:**
+```bash
+# Deploy to AWS EC2 (30 minutes)
+# See AWS_EC2_DEPLOYMENT.md for full guide
+```
+
+**Already Deployed on EC2?**
+- See [SHARING_GUIDE.md](SHARING_GUIDE.md) to make it accessible to everyone!
 
 ---
 
