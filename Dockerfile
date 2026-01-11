@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     portaudio19-dev \
     curl \
     pkg-config \
+    build-essential \
+    python3-dev \
     libavformat-dev \
     libavcodec-dev \
     libavdevice-dev \
@@ -33,6 +35,14 @@ WORKDIR /app
 
 # Copy and install requirements
 COPY requirements.txt .
+
+# Upgrade pip and install build tools
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Install PyTorch first (CPU version for smaller size)
+RUN pip install --no-cache-dir torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# Install other requirements
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install Playwright
