@@ -1,0 +1,100 @@
+# Sunny AI Configuration for Hugging Face Spaces
+# ================================================
+# Optimized for HF Spaces environment with all features enabled
+
+# General Settings
+general:
+  bot_name: "Sunny AI – Assistant"
+  log_level: "INFO"
+  output_dir: "./outputs"
+  temp_dir: "./temp"
+
+# Meeting Settings
+meeting:
+  max_duration_minutes: 180  # 3 hours max
+  waiting_room_timeout_seconds: 300  # 5 minutes
+  end_detection_interval_seconds: 10
+  auto_leave_on_end: true
+
+# Audio Settings
+audio:
+  sample_rate: 16000
+  channels: 1
+  format: "wav"
+  chunk_duration_seconds: 30
+
+# Transcription Settings (Whisper)
+transcription:
+  model_size: "base"  # Use base for faster processing on CPU
+  language: "en"
+  device: "cpu"
+  compute_type: "int8"  # Optimized for CPU
+
+# Summarization Settings (Google Gemini)
+summarization:
+  provider: "gemini"
+  gemini_api_key: "${GEMINI_API_KEY}"
+  gemini_model: "gemini-1.5-flash"  # Fast and efficient
+  max_tokens: 2048
+  temperature: 0.3
+  chunk_size_tokens: 4000
+  overlap_tokens: 200
+
+# PDF Settings
+pdf:
+  font_family: "Helvetica"
+  title_font_size: 18
+  heading_font_size: 14
+  body_font_size: 11
+  margin: 50
+
+# Email Settings
+email:
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  sender_email: "${GMAIL_ADDRESS}"
+  sender_password: "${GMAIL_APP_PASSWORD}"
+  subject_template: "Meeting Summary - {date} - {platform}"
+
+# Browser Settings
+browser:
+  headless: true  # Must be true on HF Spaces
+  timeout_ms: 30000
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+# Advanced Features Settings
+advanced_features:
+  # Speaker Diarization
+  diarization_enabled: true
+  huggingface_token: "${HF_TOKEN}"
+  min_speakers: 1
+  max_speakers: 10
+  
+  # Topic Segmentation
+  topic_segmentation_enabled: true
+  min_topic_duration_seconds: 60
+  max_topics: 10
+  
+  # Sentiment Analysis
+  sentiment_enabled: true
+  sentiment_use_llm: true  # Use Gemini for better accuracy
+  
+  # Action Item Extraction
+  action_items_enabled: true
+  action_items_use_llm: true  # Use Gemini for better extraction
+  
+  # Meeting Analytics
+  analytics_enabled: true
+  
+  # Follow-up Email Generator
+  followup_email_enabled: true
+  company_name: ""
+  sender_name: "Sunny AI"
+  
+  # RAG Memory System
+  rag_memory_enabled: true
+  memory_persist_dir: "./data/memory"
+  memory_collection: "meeting_memory"
+  memory_embedding_model: "all-MiniLM-L6-v2"  # Fast and efficient
+  memory_chunk_size: 500
+  memory_chunk_overlap: 50
