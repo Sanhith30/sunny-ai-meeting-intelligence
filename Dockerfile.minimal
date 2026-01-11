@@ -1,5 +1,5 @@
-# Sunny AI - Minimal Railway Deployment
-# Absolute minimum for Railway deployment
+# Sunny AI - Minimal Deployment with Browser Support
+# Optimized for Railway/EC2 deployment with Playwright browser automation
 
 FROM python:3.11-slim
 
@@ -7,7 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install only essential system packages
+# Install system packages including browser dependencies for Playwright
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     curl \
@@ -16,6 +16,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     python3-dev \
     pkg-config \
+    # Browser dependencies for Playwright Chromium
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libglib2.0-0 \
+    libgtk-3-0 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -34,7 +55,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir google-generativeai && \
     pip install --no-cache-dir reportlab && \
     pip install --no-cache-dir playwright && \
-    playwright install chromium
+    playwright install chromium --with-deps
 
 # Create directories
 RUN mkdir -p outputs temp data logs

@@ -1,232 +1,204 @@
-# ⚡ EC2 Quick Start - 5 Minutes to Deploy
+# EC2 Quick Start - Copy & Paste Commands
 
-The fastest way to get Sunny AI running on AWS EC2.
-
----
-
-## 🚀 Super Quick Deploy (Copy & Paste)
-
-### 1. Launch EC2 Instance
-
-**AWS Console → EC2 → Launch Instance:**
-- **AMI**: Ubuntu Server 22.04 LTS
-- **Instance Type**: t3.small (or t2.micro for free tier)
-- **Key Pair**: Create new and download
-- **Security Group**: Allow SSH (22), HTTP (80), HTTPS (443), Custom TCP (8000)
-- **Storage**: 30 GB gp3
-
-### 2. Connect to Instance
+## Initial Setup (First Time Only)
 
 ```bash
-# Mac/Linux
-chmod 400 your-key.pem
-ssh -i your-key.pem ubuntu@YOUR_INSTANCE_IP
+# Connect to EC2
+ssh -i your-key.pem ubuntu@13.126.247.12
 
-# Windows: Use PuTTY with your .ppk file
+# Clone repository
+cd ~
+git clone https://github.com/YOUR_USERNAME/sunny-ai-meeting-intelligence.git
+cd sunny-ai-meeting-intelligence
+
+# Install Docker (if not installed)
+sudo apt-get update
+sudo apt-get install -y docker.io docker-compose
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker ubuntu
+
+# Install Nginx (if not installed)
+sudo apt-get install -y nginx
+
+# Configure Nginx
+sudo nano /etc/nginx/sites-available/sunny-ai
 ```
 
-### 3. Run Automated Setup
+Paste this Nginx config:
+```nginx
+server {
+    listen 80;
+    server_name _;
 
-```bash
-# Download and run setup script
-curl -fsSL https://raw.githubusercontent.com/Sanhith30/sunny-ai-meeting-intelligence/main/scripts/ec2-setup.sh | bash
-
-# Log out and back in for Docker permissions
-exit
-# Then reconnect
+    location / {
+        proxy_pass http://localhost:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
 ```
 
-### 4. Configure Environment
+```bash
+# Enable Nginx site
+sudo ln -s /etc/nginx/sites-available/sunny-ai /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+## Deploy Application
 
 ```bash
+# Make sure you're in the project directory
 cd ~/sunny-ai-meeting-intelligence
 
-# Edit environment variables
-nano .env
-```
+# Pull latest code
+git pull origin main
 
-Add your API keys:
-```env
-GEMINI_API_KEY=your-gemini-api-key
-GMAIL_ADDRESS=your-email@gmail.com
-GMAIL_APP_PASSWORD=your-app-password
-```
+# Build Docker image
+sudo docker build -f Dockerfile.minimal -t sunny-ai-meeting-intelligence-sunny-ai .
 
-Save: `Ctrl+X`, `Y`, `Enter`
-
-### 5. Deploy Application
-
-```bash
-# Build and start
-docker-compose -f docker-compose.ec2.yml up -d
-
-# Check logs
-docker-compose logs -f
-
-# Wait for "Sunny AI Web Server started"
-# Press Ctrl+C to exit logs
-```
-
-### 6. Access Your App
-
-Open in browser:
-```
-http://YOUR_INSTANCE_IP
-```
-
-Check health:
-```bash
-curl http://YOUR_INSTANCE_IP/api/health
-```
-
----
-
-## ✅ That's It!
-
-Your Sunny AI is now running on EC2! 🎉
-
-### What You Have:
-- ✅ Sunny AI running on port 8000
-- ✅ Nginx reverse proxy on port 80
-- ✅ Automatic restarts
-- ✅ Daily backups (2 AM)
-- ✅ Firewall configured
-
-### Next Steps:
-
-**Add SSL Certificate (Optional):**
-```bash
-# Install Certbot
-sudo apt install -y certbot python3-certbot-nginx
-
-# Get certificate (replace with your domain)
-sudo certbot --nginx -d your-domain.com
-```
-
-**Monitor Application:**
-```bash
-# View logs
-docker-compose logs -f
+# Run container
+sudo docker run -d \
+  --name sunny-ai \
+  --restart unless-stopped \
+  -p 8000:8000 \
+  -e HOST=0.0.0.0 \
+  -e PORT=8000 \
+  -e ALLOWED_HOSTS=* \
+  -v $(pwd)/outputs:/app/outputs \
+  -v $(pwd)/data:/app/data \
+  -v $(pwd)/logs:/app/logs \
+  sunny-ai-meeting-intelligence-sunny-ai
 
 # Check status
-docker-compose ps
-
-# Restart
-docker-compose restart
+sudo docker ps
+sudo docker logs sunny-ai --tail 30
 ```
 
-**Update Application:**
+## Update Application (When You Have New Code)
+
 ```bash
+# Connect to EC2
+ssh -i your-key.pem ubuntu@13.126.247.12
 cd ~/sunny-ai-meeting-intelligence
+
+# Pull latest code
 git pull origin main
-docker-compose -f docker-compose.ec2.yml up -d --build
+
+# Stop and remove old container
+sudo docker stop sunny-ai
+sudo docker rm sunny-ai
+
+# Rebuild image
+sudo docker build -f Dockerfile.minimal -t sunny-ai-meeting-intelligence-sunny-ai .
+
+# Start new container
+sudo docker run -d \
+  --name sunny-ai \
+  --restart unless-stopped \
+  -p 8000:8000 \
+  -e HOST=0.0.0.0 \
+  -e PORT=8000 \
+  -e ALLOWED_HOSTS=* \
+  -v $(pwd)/outputs:/app/outputs \
+  -v $(pwd)/data:/app/data \
+  -v $(pwd)/logs:/app/logs \
+  sunny-ai-meeting-intelligence-sunny-ai
+
+# Verify
+sudo docker ps
+sudo docker logs sunny-ai --tail 30
 ```
 
----
-
-## 🔧 Troubleshooting
-
-### Can't Access from Browser?
+## Useful Commands
 
 ```bash
-# Check if app is running
-docker ps
+# View logs (live)
+sudo docker logs sunny-ai -f
 
-# Check logs
-docker logs sunny-ai
+# View last 50 lines of logs
+sudo docker logs sunny-ai --tail 50
 
-# Check Nginx
+# Check container status
+sudo docker ps
+
+# Restart container
+sudo docker restart sunny-ai
+
+# Stop container
+sudo docker stop sunny-ai
+
+# Start container
+sudo docker start sunny-ai
+
+# Remove container
+sudo docker rm sunny-ai
+
+# Execute command inside container
+sudo docker exec -it sunny-ai bash
+
+# Check Nginx status
 sudo systemctl status nginx
 
-# Test locally
-curl http://localhost:8000/api/health
+# Restart Nginx
+sudo systemctl restart nginx
+
+# Check Nginx logs
+sudo tail -f /var/log/nginx/error.log
 ```
 
-### Application Won't Start?
+## Troubleshooting
 
+### Container won't start
 ```bash
-# Check environment variables
-cat .env
-
-# Rebuild
-docker-compose down
-docker-compose -f docker-compose.ec2.yml up -d --build
-
-# Check logs for errors
-docker-compose logs
+sudo docker logs sunny-ai
 ```
 
-### Out of Memory?
-
+### "Invalid host header" error
+Make sure environment variables are set:
 ```bash
-# Add swap space
-sudo fallocate -l 2G /swapfile
-sudo chmod 600 /swapfile
-sudo mkswap /swapfile
-sudo swapon /swapfile
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+sudo docker run -d \
+  --name sunny-ai \
+  --restart unless-stopped \
+  -p 8000:8000 \
+  -e HOST=0.0.0.0 \
+  -e PORT=8000 \
+  -e ALLOWED_HOSTS=* \
+  -v $(pwd)/outputs:/app/outputs \
+  -v $(pwd)/data:/app/data \
+  -v $(pwd)/logs:/app/logs \
+  sunny-ai-meeting-intelligence-sunny-ai
 ```
 
----
-
-## 📊 Cost Estimate
-
-| Instance | Monthly Cost | Best For |
-|----------|-------------|----------|
-| t2.micro | $0 (free tier) | Testing |
-| t3.small | ~$15 | Production (core features) |
-| t3.medium | ~$30 | Production (all features) |
-
-**Save Money:**
-- Stop instance when not in use
-- Use Reserved Instances (save 72%)
-- Use Spot Instances for dev/test (save 90%)
-
----
-
-## 🎯 Common Commands
-
+### Browser automation errors
+Check if Playwright is installed:
 ```bash
-# Start application
-docker-compose -f docker-compose.ec2.yml up -d
-
-# Stop application
-docker-compose down
-
-# View logs
-docker-compose logs -f
-
-# Restart
-docker-compose restart
-
-# Update
-git pull && docker-compose -f docker-compose.ec2.yml up -d --build
-
-# Backup data
-tar -czf backup.tar.gz data outputs
-
-# Check disk space
-df -h
-
-# Check memory
-free -h
+sudo docker exec sunny-ai playwright --version
+sudo docker exec sunny-ai ls -la /root/.cache/ms-playwright/
 ```
 
----
+### Can't access from browser
+1. Check EC2 Security Group allows port 80
+2. Check Nginx is running: `sudo systemctl status nginx`
+3. Check container is running: `sudo docker ps`
+4. Check logs: `sudo docker logs sunny-ai --tail 30`
 
-## 📚 Full Documentation
+## Access Your Application
 
-For detailed setup, SSL, monitoring, and more:
-- See [AWS_EC2_DEPLOYMENT.md](AWS_EC2_DEPLOYMENT.md)
+Open browser: `http://13.126.247.12`
 
----
+## Your EC2 Details
 
-## 🆘 Need Help?
-
-1. Check [AWS_EC2_DEPLOYMENT.md](AWS_EC2_DEPLOYMENT.md) troubleshooting section
-2. View application logs: `docker-compose logs`
-3. Open GitHub issue with error details
-
----
-
-**Happy deploying! 🚀**
+- **Public IP**: 13.126.247.12
+- **Private IP**: 172.31.9.60
+- **SSH**: `ssh -i your-key.pem ubuntu@13.126.247.12`
+- **Project Path**: `/home/ubuntu/sunny-ai-meeting-intelligence`
+- **Container Name**: `sunny-ai`
+- **Port**: 8000 (internal), 80 (external via Nginx)

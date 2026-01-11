@@ -61,7 +61,7 @@ email:
 
 # Browser Settings
 browser:
-  headless: false
+  headless: true  # Set to true for Docker/server deployments, false for local debugging
   timeout_ms: 30000
   user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 
