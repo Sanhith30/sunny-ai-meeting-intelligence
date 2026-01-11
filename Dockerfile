@@ -11,6 +11,14 @@ RUN apt-get update && apt-get install -y \
     libsndfile1 \
     portaudio19-dev \
     curl \
+    pkg-config \
+    libavformat-dev \
+    libavcodec-dev \
+    libavdevice-dev \
+    libavutil-dev \
+    libswscale-dev \
+    libswresample-dev \
+    libavfilter-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Playwright browser dependencies
