@@ -1,0 +1,103 @@
+# Sunny AI - Hugging Face Spaces Deployment
+# Full features enabled
+
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    python3-dev \
+    pkg-config \
+    ffmpeg \
+    libsndfile1 \
+    portaudio19-dev \
+    curl \
+    wget \
+    ca-certificates \
+    git \
+    # Playwright browser dependencies
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy application files
+COPY . .
+
+# Upgrade pip
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Install PyTorch CPU version
+RUN pip install --no-cache-dir \
+    torch==2.1.0 \
+    torchaudio==2.1.0 \
+    --index-url https://download.pytorch.org/whl/cpu
+
+# Install core dependencies
+RUN pip install --no-cache-dir \
+    python-dotenv==1.0.0 \
+    pyyaml==6.0.1 \
+    pydantic[email]==2.5.0 \
+    fastapi==0.108.0 \
+    uvicorn==0.25.0 \
+    jinja2==3.1.2 \
+    httpx==0.26.0 \
+    aiosqlite==0.19.0 \
+    tenacity==8.2.3 \
+    structlog==23.2.0 \
+    numpy==1.26.2 \
+    soundfile==0.12.1 \
+    sounddevice==0.4.6 \
+    scipy==1.11.4 \
+    faster-whisper==0.10.0 \
+    google-generativeai==0.8.0 \
+    reportlab==4.0.7 \
+    playwright==1.40.0
+
+# Install advanced features
+RUN pip install --no-cache-dir \
+    pyannote.audio==3.1.1 \
+    transformers>=4.35.0 \
+    sentence-transformers>=2.2.0 \
+    chromadb>=0.4.0 \
+    scikit-learn>=1.3.0
+
+# Install Playwright browsers
+RUN playwright install chromium
+
+# Create directories
+RUN mkdir -p outputs temp data logs
+
+# Set environment for HF Spaces
+ENV PORT=7860
+ENV HOST=0.0.0.0
+ENV ENVIRONMENT=production
+
+EXPOSE 7860
+
+# Run application
+CMD ["python", "-m", "uvicorn", "web.app:app", "--host", "0.0.0.0", "--port", "7860"]
