@@ -557,29 +557,71 @@
 
     <!-- API Key Modal -->
     <div id="apiKeyModal" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4">
-            <div class="glass rounded-3xl p-8 max-w-md w-full animate-slide-up">
+            <div class="glass rounded-3xl p-8 max-w-lg w-full animate-slide-up">
                 <div class="text-center mb-6">
-                    <div class="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">API Key Required</h3>
-                    <p class="text-dark-500 dark:text-dark-400 text-sm">Enter your Gemini API key to enable AI summarization</p>
+                    <h3 class="text-2xl font-bold mb-2">🔑 Your API Key Required</h3>
+                    <p class="text-dark-500 dark:text-dark-400 text-sm mb-4">
+                        To use Sunny AI, you need your own <strong>free</strong> Gemini API key
+                    </p>
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-medium">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        100% Free • No Credit Card Required
+                    </div>
                 </div>
                 
-                <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key..." 
-                    class="w-full px-4 py-3 rounded-xl border-2 border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-800 focus:border-indigo-500 focus:outline-none mb-4">
+                <div class="bg-indigo-500/10 border border-indigo-500/30 rounded-xl p-4 mb-6">
+                    <h4 class="font-semibold text-sm mb-2 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Why do I need my own API key?
+                    </h4>
+                    <p class="text-xs text-dark-600 dark:text-dark-300">
+                        Sunny AI is <strong>free and open-source</strong>. To keep it free for everyone, each user provides their own API key. This ensures fair usage and keeps costs sustainable.
+                    </p>
+                </div>
                 
-                <button onclick="saveApiKey()" class="w-full py-3 px-6 text-white gradient-bg rounded-xl font-medium btn-primary">
-                    Save API Key
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Gemini API Key</label>
+                        <input type="password" id="apiKeyInput" placeholder="AIzaSy..." 
+                            class="w-full px-4 py-3 rounded-xl border-2 border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-800 focus:border-indigo-500 focus:outline-none transition-all">
+                    </div>
+                    
+                    <div class="flex items-start gap-2 text-xs text-dark-500 dark:text-dark-400">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                        <span>Your API key is stored securely and never shared</span>
+                    </div>
+                </div>
+                
+                <button onclick="saveApiKey()" class="w-full py-3 px-6 text-white gradient-bg rounded-xl font-semibold btn-primary mb-4">
+                    Save & Continue
                 </button>
                 
-                <p class="mt-4 text-xs text-center text-dark-400">
-                    Get your API key from <a href="https://aistudio.google.com/apikey" target="_blank" class="text-indigo-500 hover:underline">Google AI Studio</a>
-                </p>
+                <div class="text-center">
+                    <p class="text-xs text-dark-400 mb-2">Don't have an API key yet?</p>
+                    <a href="https://aistudio.google.com/apikey" target="_blank" 
+                        class="inline-flex items-center gap-2 text-sm text-indigo-500 hover:text-indigo-600 font-medium">
+                        <span>Get Free API Key from Google</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                        </svg>
+                    </a>
+                    <p class="text-xs text-dark-400 mt-3">
+                        Takes less than 1 minute • No credit card required
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -689,13 +731,23 @@
                 const data = await response.json();
                 
                 if (!data.gemini_configured || !data.llm_available) {
+                    // Show modal and make it non-dismissible
                     document.getElementById('apiKeyModal').classList.remove('hidden');
+                    // Disable form inputs until API key is configured
+                    document.getElementById('meetingUrl').disabled = true;
+                    document.getElementById('recipientEmail').disabled = true;
+                    document.getElementById('submitBtn').disabled = true;
                 } else {
-                    // API key is already configured, hide modal
+                    // API key is already configured
                     document.getElementById('apiKeyModal').classList.add('hidden');
+                    document.getElementById('meetingUrl').disabled = false;
+                    document.getElementById('recipientEmail').disabled = false;
+                    document.getElementById('submitBtn').disabled = false;
                 }
             } catch (error) {
                 console.error('Health check failed:', error);
+                // Show API key modal on error
+                document.getElementById('apiKeyModal').classList.remove('hidden');
             }
         }
 
@@ -708,6 +760,22 @@
                 return;
             }
             
+            if (!apiKey.startsWith('AIzaSy')) {
+                showToast('Invalid API key format. Gemini keys start with "AIzaSy"', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg class="w-5 h-5 animate-spin mx-auto" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            `;
+            
             try {
                 const response = await fetch('/api/config/apikey', {
                     method: 'POST',
@@ -719,12 +787,21 @@
                 
                 if (data.status === 'success') {
                     document.getElementById('apiKeyModal').classList.add('hidden');
-                    showToast('API key configured successfully!', 'success');
+                    document.getElementById('meetingUrl').disabled = false;
+                    document.getElementById('recipientEmail').disabled = false;
+                    document.getElementById('submitBtn').disabled = false;
+                    showToast('✅ API key configured successfully! You can now use Sunny AI.', 'success');
+                    // Clear the input for security
+                    document.getElementById('apiKeyInput').value = '';
                 } else {
-                    showToast(data.message || 'Invalid API key', 'error');
+                    showToast(data.message || 'Invalid API key. Please check and try again.', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
                 }
             } catch (error) {
-                showToast('Failed to save API key', 'error');
+                showToast('Failed to save API key. Please try again.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
         }
 

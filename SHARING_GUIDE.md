@@ -12,6 +12,17 @@ Your complete guide to making Sunny AI accessible to the world!
 - **Application**: Sunny AI is live and working
 - **Port**: Running on port 8000
 
+### 🔑 Important: Users Need Their Own API Key
+
+**Sunny AI is free and open-source.** Each user needs their own free Gemini API key:
+
+- ✅ Takes 1 minute to get
+- ✅ Completely free (no credit card)
+- ✅ Get it here: https://aistudio.google.com/apikey
+- ✅ See [API_KEY_GUIDE.md](API_KEY_GUIDE.md) for instructions
+
+When users visit your Sunny AI, they'll be prompted to enter their API key before using it.
+
 ### ⚠️ Current Issue
 - Port 8000 is not accessible from the internet
 - Need to either:

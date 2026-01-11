@@ -348,9 +348,23 @@ sunny_ai/
 
 ## 🚀 Quick Start
 
+### ⚠️ Important: You Need Your Own API Key
+
+**Sunny AI is free and open-source.** To use it, you need your own **free** Gemini API key:
+
+1. Get your free API key: **[Google AI Studio](https://aistudio.google.com/apikey)** (takes 1 minute)
+2. No credit card required
+3. Generous free tier (50+ meetings/day)
+4. See our [API Key Guide](API_KEY_GUIDE.md) for detailed instructions
+
 ### Option 1: One-Click Deploy (Recommended)
 
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/sunny-ai-meeting-intelligence)
+
+**After deployment:**
+1. Open your deployed app
+2. Enter your Gemini API key when prompted
+3. Start using Sunny AI!
 
 ### Option 2: Local Installation
 
@@ -385,13 +399,43 @@ Open **http://localhost:8000** in your browser 🎉
 
 ## ⚙️ Configuration
 
-### Required API Keys
+### 🔑 Required: Your Own API Key
 
-| Key | How to Get | Free? |
-|-----|------------|-------|
-| `GEMINI_API_KEY` | [Google AI Studio](https://aistudio.google.com/apikey) | ✅ Yes |
-| `GMAIL_APP_PASSWORD` | [Google Account](https://myaccount.google.com/apppasswords) | ✅ Yes |
-| `HF_TOKEN` (optional) | [HuggingFace](https://huggingface.co/settings/tokens) | ✅ Yes |
+**Sunny AI requires your own free Gemini API key.** This keeps the service free for everyone!
+
+#### How to Get Your API Key (1 minute):
+
+1. Visit **[Google AI Studio](https://aistudio.google.com/apikey)**
+2. Sign in with your Google account
+3. Click "Create API Key"
+4. Copy your key (starts with `AIzaSy...`)
+5. Paste it in Sunny AI when prompted
+
+📖 **Detailed guide**: See [API_KEY_GUIDE.md](API_KEY_GUIDE.md)
+
+### Why Your Own Key?
+
+- ✅ **100% Free** - Google provides generous free tier
+- ✅ **No Credit Card** - No payment required
+- ✅ **Your Privacy** - Direct connection to Google
+- ✅ **No Limits** - Your own quota, not shared
+- ✅ **Fair Usage** - Everyone gets equal access
+
+### Free Tier Limits
+
+| Feature | Free Tier |
+|---------|-----------|
+| **Meetings per day** | ~50 |
+| **Meeting length** | Up to 3 hours |
+| **Cost** | $0 Forever |
+
+### Optional API Keys
+
+| Key | How to Get | Required? |
+|-----|------------|-----------|
+| `GEMINI_API_KEY` | [Google AI Studio](https://aistudio.google.com/apikey) | ✅ **YES** |
+| `GMAIL_APP_PASSWORD` | [Google Account](https://myaccount.google.com/apppasswords) | ❌ Optional (for email) |
+| `HF_TOKEN` | [HuggingFace](https://huggingface.co/settings/tokens) | ❌ Optional (for diarization) |
 
 ### Environment Variables
 

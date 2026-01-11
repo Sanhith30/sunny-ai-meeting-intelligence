@@ -4,6 +4,21 @@ Choose the best deployment option for your needs!
 
 ---
 
+## 🔑 Important: User API Keys
+
+**Sunny AI is free and open-source.** Each user needs their own **free** Gemini API key:
+
+- ✅ **No cost to you** - Users provide their own keys
+- ✅ **Takes 1 minute** - Get from [Google AI Studio](https://aistudio.google.com/apikey)
+- ✅ **Completely free** - No credit card required
+- ✅ **Fair usage** - Sustainable for everyone
+
+When users visit your deployed Sunny AI, they'll be prompted to enter their API key before using it.
+
+📖 **Share this guide with your users**: [API_KEY_GUIDE.md](API_KEY_GUIDE.md)
+
+---
+
 ## 📊 Quick Comparison
 
 | Feature | AWS EC2 | Hugging Face Spaces | Railway |

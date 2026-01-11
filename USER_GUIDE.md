@@ -19,23 +19,43 @@
 
 ## 🚀 Getting Started
 
+### 🔑 Step 1: Get Your Free API Key (Required)
+
+**Sunny AI requires your own free Gemini API key.** This takes just 1 minute:
+
+1. Visit **[Google AI Studio](https://aistudio.google.com/apikey)**
+2. Sign in with your Google account
+3. Click "Create API Key"
+4. Copy your key (starts with `AIzaSy...`)
+
+**Why?** Sunny AI is free and open-source. Each user provides their own API key to keep it free for everyone!
+
+📖 **Detailed guide**: See [API_KEY_GUIDE.md](API_KEY_GUIDE.md)
+
 ### Prerequisites
 
-Before using Sunny AI, make sure you have:
+Before using Sunny AI, you need:
 
-1. **API Keys** (all free):
-   - Google Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey)
-   - Gmail app password from [Google Account](https://myaccount.google.com/apppasswords)
-   - (Optional) HuggingFace token for speaker diarization
+1. **Required**:
+   - ✅ Google Gemini API key (free, no credit card)
+   - ✅ Meeting link (Google Meet or Zoom)
+   - ✅ Email address for summaries
 
-2. **Meeting Links**:
-   - Google Meet URL (e.g., `https://meet.google.com/abc-defg-hij`)
-   - Zoom meeting URL (e.g., `https://zoom.us/j/123456789`)
-
-3. **Email Address**:
-   - Where you want to receive meeting summaries
+2. **Optional**:
+   - Gmail app password (for email delivery)
+   - HuggingFace token (for speaker diarization)
 
 ### First-Time Setup
+
+#### Option A: Using Web Interface (Easiest)
+
+1. Open Sunny AI in your browser
+2. You'll see an API key prompt
+3. Paste your Gemini API key
+4. Click "Save & Continue"
+5. Done! Start using Sunny AI
+
+#### Option B: Using Environment Variables (Advanced)
 
 1. **Configure Environment Variables**:
    ```bash
@@ -44,9 +64,9 @@ Before using Sunny AI, make sure you have:
    
    # Edit .env with your API keys
    GEMINI_API_KEY=your-gemini-api-key-here
-   GMAIL_ADDRESS=your-email@gmail.com
-   GMAIL_APP_PASSWORD=your-app-password-here
-   HF_TOKEN=your-huggingface-token-here  # Optional
+   GMAIL_ADDRESS=your-email@gmail.com  # Optional
+   GMAIL_APP_PASSWORD=your-app-password  # Optional
+   HF_TOKEN=your-huggingface-token  # Optional
    ```
 
 2. **Customize Settings** (optional):

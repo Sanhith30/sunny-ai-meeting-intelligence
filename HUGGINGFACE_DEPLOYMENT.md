@@ -4,6 +4,25 @@ Deploy Sunny AI on Hugging Face Spaces with all features enabled!
 
 ---
 
+## 🔑 Important: User API Keys Required
+
+**Sunny AI is free and open-source.** Each user who accesses your Space will need their own **free** Gemini API key:
+
+- ✅ **No cost to you** - Users provide their own keys
+- ✅ **Better privacy** - Each user's data goes directly to Google
+- ✅ **No rate limits** - Each user has their own quota
+- ✅ **Fair usage** - Sustainable for everyone
+
+**How it works:**
+1. You deploy Sunny AI on HF Spaces
+2. Users visit your Space
+3. They enter their own API key (takes 1 minute to get)
+4. They can use all features for free
+
+📖 **Share this with your users**: [API_KEY_GUIDE.md](API_KEY_GUIDE.md)
+
+---
+
 ## 📋 Table of Contents
 
 1. [Prerequisites](#prerequisites)
@@ -21,9 +40,20 @@ Deploy Sunny AI on Hugging Face Spaces with all features enabled!
 ### What You'll Need:
 
 - ✅ Hugging Face account ([Sign up here](https://huggingface.co/join))
-- ✅ Gemini API key ([Get here](https://aistudio.google.com/apikey))
-- ✅ Gmail app password (optional, for email features)
-- ✅ HuggingFace token ([Get here](https://huggingface.co/settings/tokens))
+- ✅ HuggingFace token ([Get here](https://huggingface.co/settings/tokens)) - for speaker diarization
+
+### 🔑 About API Keys:
+
+**You DON'T need to configure Gemini API keys in HF Spaces secrets!**
+
+- ❌ No need to set `GEMINI_API_KEY` in repository secrets
+- ❌ No need to configure Gmail credentials
+- ✅ Users will provide their own API keys when they use the app
+- ✅ This keeps your Space free and sustainable
+
+**Optional**: 
+- `HF_TOKEN` - Only needed for speaker diarization feature
+- `GMAIL_*` - Only if you want to provide shared email service
 
 ### Cost:
 
@@ -396,15 +426,18 @@ rm -rf temp
 # - requirements.txt
 ```
 
-### Step 2: Add Secrets in Hugging Face
+### Step 2: Add Secrets in Hugging Face (Optional)
+
+**Note**: These secrets are now OPTIONAL. Users will provide their own API keys.
 
 1. Go to your Space settings
 2. Click **"Repository secrets"**
-3. Add these secrets:
-   - `GEMINI_API_KEY`: Your Gemini API key
-   - `GMAIL_ADDRESS`: Your Gmail (optional)
+3. Add these secrets (only if you want to provide shared services):
+   - `HF_TOKEN`: Your HuggingFace token (for speaker diarization)
+   - `GMAIL_ADDRESS`: Your Gmail (optional, for shared email service)
    - `GMAIL_APP_PASSWORD`: Gmail app password (optional)
-   - `HF_TOKEN`: Your HuggingFace token
+
+**You do NOT need to add `GEMINI_API_KEY`** - users will provide their own!
 
 ### Step 3: Push to Hugging Face
 

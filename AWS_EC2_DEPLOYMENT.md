@@ -4,6 +4,25 @@ Complete step-by-step guide to deploy Sunny AI on Amazon EC2.
 
 ---
 
+## 🔑 Important: User API Keys Required
+
+**Sunny AI is free and open-source.** Each user who accesses your deployment will need their own **free** Gemini API key:
+
+- ✅ **No cost to you** - Users provide their own keys
+- ✅ **Better privacy** - Each user's data goes directly to Google
+- ✅ **No rate limits** - Each user has their own quota
+- ✅ **Fair usage** - Sustainable for everyone
+
+**How it works:**
+1. You deploy Sunny AI on EC2
+2. Users visit your URL
+3. They enter their own API key (takes 1 minute to get)
+4. They can use all features for free
+
+📖 **Share this with your users**: [API_KEY_GUIDE.md](API_KEY_GUIDE.md)
+
+---
+
 ## 📋 Table of Contents
 
 1. [Prerequisites](#prerequisites)
@@ -24,10 +43,17 @@ Complete step-by-step guide to deploy Sunny AI on Amazon EC2.
 - ✅ Credit card for AWS (Free tier available)
 - ✅ SSH client (Terminal on Mac/Linux, PuTTY on Windows)
 - ✅ Domain name (optional, for custom URL)
-- ✅ API Keys:
-  - Gemini API key
-  - Gmail app password
-  - HuggingFace token (optional)
+
+### 🔑 About API Keys:
+
+**You DON'T need to configure API keys on the server!**
+
+- ❌ No need to set `GEMINI_API_KEY` in `.env`
+- ❌ No need to configure Gmail credentials
+- ✅ Users will provide their own API keys when they use the app
+- ✅ This keeps your deployment free and sustainable
+
+**Optional**: If you want to provide a shared API key for your team, you can still configure it in `.env`, but it's not required.
 
 ### Cost Estimate:
 

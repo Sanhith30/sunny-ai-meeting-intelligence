@@ -35,26 +35,39 @@ Your AI-powered meeting assistant that joins meetings, transcribes, and generate
 
 ## 🎯 Quick Start
 
-### 1. Configure API Keys
+### 1. Get Your Free API Key (Required)
+
+**Important:** Sunny AI requires your own free Gemini API key to work.
+
+1. Visit **[Google AI Studio](https://aistudio.google.com/apikey)**
+2. Sign in with Google
+3. Click "Create API Key"
+4. Copy your key
+
+**Why?** Sunny AI is free and open-source. Each user provides their own API key to keep it free for everyone!
+
+### 2. Configure API Keys
 
 Go to **Settings → Repository secrets** and add:
 
-- `GEMINI_API_KEY`: Your Gemini API key ([Get here](https://aistudio.google.com/apikey))
-- `HF_TOKEN`: Your HuggingFace token ([Get here](https://huggingface.co/settings/tokens))
+- `GEMINI_API_KEY`: Your Gemini API key (**REQUIRED**)
+- `HF_TOKEN`: Your HuggingFace token (optional, for speaker diarization)
 - `GMAIL_ADDRESS`: Your Gmail address (optional, for email features)
 - `GMAIL_APP_PASSWORD`: Gmail app password (optional)
 
-### 2. Wait for Build
+### 3. Wait for Build
 
 The app will automatically build and start. This takes about 10-15 minutes.
 
-### 3. Start Using!
+### 4. Start Using!
 
 1. Open the web interface
-2. Enter a meeting URL (Zoom or Google Meet)
-3. Enter your email address
-4. Click "Join Meeting"
-5. Sunny AI will join, record, transcribe, and send you a summary!
+2. The app will ask for your API key on first use
+3. Enter your Gemini API key
+4. Enter a meeting URL (Zoom or Google Meet)
+5. Enter your email address
+6. Click "Join Meeting"
+7. Sunny AI will join, record, transcribe, and send you a summary!
 
 ## 📖 How It Works
 
