@@ -11,6 +11,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     curl \
+    portaudio19-dev \
+    libsndfile1 \
+    build-essential \
+    python3-dev \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
