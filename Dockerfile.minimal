@@ -26,7 +26,7 @@ COPY . .
 # Install Python packages one by one
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir python-dotenv pyyaml && \
-    pip install --no-cache-dir pydantic fastapi uvicorn && \
+    pip install --no-cache-dir pydantic[email] fastapi uvicorn && \
     pip install --no-cache-dir jinja2 httpx aiosqlite && \
     pip install --no-cache-dir tenacity structlog && \
     pip install --no-cache-dir numpy soundfile sounddevice && \
