@@ -149,7 +149,6 @@ sudo docker logs sunny-ai --tail 30
 Look for:
 - ✅ "Sunny AI Web Server started"
 - ✅ "Uvicorn running on http://0.0.0.0:8000"
-- ❌ No errors about "libnspr4.so" or "X server"
 
 ### Step 7: Test in Browser
 1. Go to: `http://13.126.247.12`
