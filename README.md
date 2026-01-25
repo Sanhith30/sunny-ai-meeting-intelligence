@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/badge/☀️_Sunny_AI-Meeting_Assistant-FFD700?style=for-the-badge&logoColor=white" alt="Sunny AI"/>
 </p>
 
-<h1 align="center">☀️✨ Sunny AI</h1>
+<h1 align="center">☀️ Sunny AI</h1>
 <h3 align="center">Your AI Assistant That Attends Meetings For You</h3>
 
 <p align="center">
